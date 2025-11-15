@@ -1,5 +1,4 @@
 import express from "express";
-import {nanoid} from "nanoid"
 import dotenv from "dotenv"
 import connectDB from "./src/config/monogo.config.js"
 import short_url from "./src/routes/short_url.route.js"
@@ -16,8 +15,8 @@ dotenv.config("./.env")
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:5173', // your React app
-    credentials: true // 👈 this allows cookies to be sent
+    origin: process.env.APP_URL,
+    credentials: true 
 }));
 
 app.use(express.json())
@@ -35,7 +34,7 @@ app.use(errorHandler)
 
 app.listen(3000,()=>{
     connectDB()
-    console.log("Server is running on http://localhost:3000");
+    console.log("Server is running successfully!");
 })
 
 // GET - Redirection 
