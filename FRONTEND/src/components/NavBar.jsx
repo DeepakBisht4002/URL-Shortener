@@ -1,7 +1,24 @@
-import React from 'react';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from "@tanstack/react-router";
+import { logoutUser } from "../api/user.api";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../store/slice/authSlice";
 
 const Navbar = () => {
+  const dispatch = useDispatch();
+  const { user, isAuthenticated } = useSelector((store) => store.auth);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();  // call API to logout
+      dispatch(logout());  // update Redux state
+      navigate({to : "/"});       // redirect to home
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+
   return (
     <nav className="bg-white border border-b-black">
       <div className=" mx-auto px-4 sm:px-6 lg:px-8">
@@ -12,15 +29,17 @@ const Navbar = () => {
               URL Shortener
             </Link>
           </div>
-          
+
           {/* Right side - Auth buttons */}
           <div className="flex items-center">
-            {/* {(true) ? (
+            {isAuthenticated ? (
               <div className="flex items-center space-x-4">
-                <span className="text-gray-700">Welcome, {userName || 'User'}</span>
+                <span className="text-gray-700">
+                  Welcome, {user?.user?.name || "User"}
+                </span>
                 <button
-                  onClick={onLogout}
-                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium"
+                  onClick={() => handleLogout()}
+                  className="bg-red-500 hover:bg-red-600 text-white cursor-pointer px-4 py-2 rounded-md text-sm font-medium"
                 >
                   Logout
                 </button>
@@ -32,7 +51,7 @@ const Navbar = () => {
               >
                 Login
               </Link>
-            )} */}
+            )}
           </div>
         </div>
       </div>
